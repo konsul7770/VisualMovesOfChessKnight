@@ -1,0 +1,140 @@
+<html>
+	<head>
+		<style>
+			table {
+  			border: 1px solid black;
+		}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+		var arrresult = []; //массив для хранения предыдущих ходов, нужен для перерисовки доски
+		var rep = false; //флаг для определения, впервые или повторно делается ход
+		
+		
+		//функция для отрисовки доски, запускается при загрузке страницы
+		(function(){
+			var l = ["A","B","C","D","E","F","G","H"];
+			var tab = document.createElement("TABLE");
+			tab.setAttribute("id","chessboard");
+			tab.setAttribute("style","width:505px;height:480px");
+			document.body.appendChild(tab);
+			
+			var tablehead = document.createElement("thead");
+			var rowhead = document.createElement("tr");
+			
+			var tdhead = document.createElement("th");
+			tdhead.setAttribute("scope","col");
+			tdhead.innerHTML = '';
+			rowhead.appendChild(tdhead);
+			
+			for(i=0;i<8;i++){
+				var tdhead = document.createElement("th");
+				tdhead.setAttribute("scope","col");
+				tdhead.innerHTML = l[i];
+				rowhead.appendChild(tdhead);
+			}
+			tablehead.appendChild(rowhead);
+			tab.appendChild(tablehead);
+			
+			for(i=8;i>0;i--){
+				var trow = document.createElement("TR");
+				trow.setAttribute("id","row"+i);
+				document.getElementById("chessboard").appendChild(trow);
+				var thh = document.createElement("TH");
+				thh.setAttribute("style","width:35px;");
+				thh.setAttribute("scope","row");
+				thh.innerHTML = i;
+				document.getElementById("row"+i).appendChild(thh);
+				for(j = 0;j<8;j++){
+					var tdd = document.createElement("TD");
+					tdd.setAttribute("id",l[j]+i);
+					tdd.setAttribute("onclick","result("+j+","+i+")");
+					if(((i%2==0)&&(j%2!=0))||((i%2!=0)&&(j%2==0))){
+						tdd.setAttribute("style","background-color:black;");
+					}
+					document.getElementById("row"+i).appendChild(tdd);
+				}
+			}
+		}
+		)();
+		
+		
+		//функция вычисления допустимых ходов и отображения их на доске
+		function result(l,n){
+		
+			var let = ["A","B","C","D","E","F","G","H"];
+			var entcomb = let[l]+n;
+			var count = -1;
+			
+			if(rep){
+				draw();
+			}
+			
+			for(i = 0;i < let.length; i++){
+				if(entcomb[0]==let[i]){
+					count = i;
+					break;
+				}
+			}
+			
+			if((count+2)<=7){
+				if((parseInt(entcomb[1])+1)<=8){
+					arrresult.push(let[count+2]+(parseInt(entcomb[1])+1));
+				}
+				if((parseInt(entcomb[1])-1)>=1){
+					arrresult.push(let[count+2]+(parseInt(entcomb[1])-1));
+				}
+			}
+			if((count-2)>=0){
+				if((parseInt(entcomb[1])+1)<=8){
+					arrresult.push(let[count-2]+(parseInt(entcomb[1])+1));
+				}
+				if((parseInt(entcomb[1])-1)>=1){
+					arrresult.push(let[count-2]+(parseInt(entcomb[1])-1));
+				}
+			}
+			if((parseInt(entcomb[1])+2)<=8){
+				if((count+1)<=7){
+					arrresult.push(let[count+1]+(parseInt(entcomb[1])+2));
+				}
+				if((count-1)>=0){
+					arrresult.push(let[count-1]+(parseInt(entcomb[1])+2));
+				}
+			}
+			if((parseInt(entcomb[1])-2)>=1){
+				if((count+1)<=7){
+					arrresult.push(let[count+1]+(parseInt(entcomb[1])-2));
+				}
+				if((count-1)>=0){
+					arrresult.push(let[count-1]+(parseInt(entcomb[1])-2));
+				}
+			}
+			document.getElementById(entcomb).style.backgroundColor = "blue";
+			for(i=0;i<arrresult.length;i++){
+				document.getElementById(arrresult[i]).style.backgroundColor = "green";
+			}
+			arrresult.push(entcomb);
+			rep = true;
+		}
+		
+		
+		//функция перерисовки доски, вызывается при повторном нажатии клеток пользователем
+		function draw(){
+			var let = ["A","B","C","D","E","F","G","H"];
+			for(i=0;i<arrresult.length;i++){
+				var str = arrresult[i];
+				var l = let.indexOf(str[0]);
+				var n = parseInt(str[1],10);
+				if(((l%2==0)&&(n%2!=0))||((l%2!=0)&&(n%2==0))){
+					document.getElementById(arrresult[i]).style.backgroundColor = "black";
+				}else{
+					document.getElementById(arrresult[i]).style.backgroundColor = "white";
+				}
+			}
+			arrresult.splice(0,arrresult.length);
+		}
+		
+		</script>
+	</body>
+</html>
